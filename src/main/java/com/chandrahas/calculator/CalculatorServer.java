@@ -18,6 +18,7 @@ import com.sun.net.httpserver.HttpServer;
 public class CalculatorServer {
 
 	private static final String API_PREFIX = "/api/v1/";
+	private static final String HEALTH_PATH = "/actuator/health";
 
 	// rejects inputs like 1e999999999 that would blow up when printed as a plain number
 	private static final int MAX_SCALE = 1000;
@@ -68,8 +69,19 @@ public class CalculatorServer {
 		String path = exchange.getRequestURI().getPath();
 		String name = path.startsWith(API_PREFIX) ? path.substring(API_PREFIX.length()) : "";
 		BinaryOperator<BigDecimal> operation = operations.get(name);
-		if (operation == null) {
+		boolean isHealth = path.equals(HEALTH_PATH);
+		if (operation == null && !isHealth) {
 			sendError(exchange, 404, "Not Found", "No such endpoint");
+			return;
+		}
+		if (!exchange.getRequestMethod().equals("GET")) {
+			exchange.getResponseHeaders().set("Allow", "GET");
+			sendError(exchange, 405, "Method Not Allowed", "Only GET is supported");
+			return;
+		}
+
+		if (isHealth) {
+			send(exchange, 200, "{\"status\":\"UP\"}");
 			return;
 		}
 
