@@ -1,0 +1,27 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+*.swp
+
+# OS
+.DS_Store
+
+# Secrets / local config
+.env
+*.pem
+*.key
+application-local.properties
+
+# Logs
+*.log
+
+# Course handout
+*.docx
