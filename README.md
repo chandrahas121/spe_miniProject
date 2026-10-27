@@ -4,7 +4,7 @@ A small calculator REST API written in plain Java (no framework, just the JDK's 
 built with Maven, with a full CI/CD pipeline (GitHub, Jenkins, Docker, Docker Compose).
 Built for CSE 816 - Software Production Engineering.
 
-The pipeline parts (Docker, Compose, Jenkins) are still being added.
+The Jenkins pipeline is still being added.
 
 ## Requirements
 
@@ -21,6 +21,33 @@ java -jar target/calculator.jar
 
 The app listens on port **8081**. Set the `PORT` environment variable to change it.
 Test reports (JUnit XML) end up in `target/surefire-reports/`.
+
+## Run with Docker
+
+Single container:
+
+```bash
+docker build -t calculator .
+docker run -p 8081:8081 calculator
+curl "localhost:8081/api/v1/add?a=2&b=3"
+```
+
+The Dockerfile is multi-stage (Maven + JDK to build, slim JRE alpine to run) and the container runs as a non-root user.
+
+## Run with Docker Compose
+
+Starts nginx in front of two calculator replicas:
+
+```bash
+docker compose up -d       # builds the image the first time
+docker compose ps          # all three containers should show (healthy)
+curl "localhost:8088/api/v1/add?a=2&b=3"
+docker compose down
+```
+
+- nginx listens on **8088** and spreads requests over both replicas, the `X-Upstream` response header shows which one answered
+- the calculator containers have a health check on `/actuator/health` and restart automatically
+- `IMAGE_NAME` and `IMAGE_TAG` pick the image to run (Jenkins sets them), without them the image is built locally
 
 ## API
 
@@ -64,4 +91,7 @@ src/main/java/com/chandrahas/calculator/
     CalculatorServer         HTTP routing, parameter parsing, JSON responses
     Calculator               the maths
 src/test/java/...            JUnit 5 unit tests + HTTP integration tests
+Dockerfile                   multi-stage image build
+docker-compose.yml           nginx + two calculator replicas
+nginx/default.conf           reverse proxy config
 ```
