@@ -4,8 +4,6 @@ A small calculator REST API written in plain Java (no framework, just the JDK's 
 built with Maven, with a full CI/CD pipeline (GitHub, Jenkins, Docker, Docker Compose).
 Built for CSE 816 - Software Production Engineering.
 
-The Jenkins pipeline is still being added.
-
 ## Requirements
 
 - JDK 21
@@ -49,6 +47,32 @@ docker compose down
 - the calculator containers have a health check on `/actuator/health` and restart automatically
 - `IMAGE_NAME` and `IMAGE_TAG` pick the image to run (Jenkins sets them), without them the image is built locally
 
+## CI/CD pipeline (Jenkins)
+
+The `Jenkinsfile` is a declarative pipeline. It starts on every push to GitHub (webhook, with Poll SCM as a fallback).
+
+| Stage | What it does |
+|-------|--------------|
+| Checkout | pulls the latest code from GitHub |
+| Build | `./mvnw clean package -DskipTests` |
+| Test | `./mvnw test`, publishes the JUnit results, a failing test fails the build |
+| Docker Build | builds `<dockerhub-user>/calculator:<build number>` and `latest` |
+| Push | pushes both tags to Docker Hub |
+| Deploy | `docker compose up -d` with that tag, then waits until `/actuator/health` answers `UP` |
+
+After the run an email goes out saying whether the build succeeded or failed. Re-running the pipeline is safe,
+Compose only recreates containers whose image changed, and builds never run at the same time.
+
+### Jenkins setup
+
+- the `jenkins` user must be in the `docker` group (`sudo usermod -aG docker jenkins`, then restart Jenkins)
+- credentials, created in Jenkins under Manage Jenkins > Credentials, nothing secret is stored in the repo:
+  - `dockerhub-creds`: username with password, the Docker Hub user and an access token
+  - `notify-email`: secret text, the address that receives the build mails
+- SMTP for the mails: Manage Jenkins > System > E-mail Notification
+- job: New Item > Pipeline > Pipeline script from SCM > Git, this repo, branch `*/main`, script path `Jenkinsfile`
+- trigger: the GitHub webhook points to `<jenkins-url>/github-webhook/`
+
 ## API
 
 All endpoints are `GET` and take two numbers, `a` and `b`.
@@ -91,6 +115,7 @@ src/main/java/com/chandrahas/calculator/
     CalculatorServer         HTTP routing, parameter parsing, JSON responses
     Calculator               the maths
 src/test/java/...            JUnit 5 unit tests + HTTP integration tests
+Jenkinsfile                  CI/CD pipeline
 Dockerfile                   multi-stage image build
 docker-compose.yml           nginx + two calculator replicas
 nginx/default.conf           reverse proxy config
