@@ -4,6 +4,8 @@ A small calculator REST API written in plain Java (no framework, just the JDK's 
 built with Maven, with a full CI/CD pipeline (GitHub, Jenkins, Docker, Docker Compose).
 Built for CSE 816 - Software Production Engineering.
 
+Docker image: https://hub.docker.com/r/chandrahas121/calculator
+
 ## Requirements
 
 - JDK 21
@@ -119,4 +121,5 @@ Jenkinsfile                  CI/CD pipeline
 Dockerfile                   multi-stage image build
 docker-compose.yml           nginx + two calculator replicas
 nginx/default.conf           reverse proxy config
+docs/report.pdf              project report (source: docs/report.html)
 ```
