@@ -51,7 +51,7 @@ docker compose down
 
 ## CI/CD pipeline (Jenkins)
 
-The `Jenkinsfile` is a declarative pipeline. It starts on every push to GitHub (webhook, with Poll SCM as a fallback).
+The `Jenkinsfile` is a declarative pipeline. It starts automatically after a push to GitHub: Jenkins polls the repository every 5 minutes (Poll SCM).
 
 | Stage | What it does |
 |-------|--------------|
@@ -73,7 +73,7 @@ Compose only recreates containers whose image changed, and builds never run at t
   - `notify-email`: secret text, the address that receives the build mails
 - SMTP for the mails: Manage Jenkins > System > E-mail Notification
 - job: New Item > Pipeline > Pipeline script from SCM > Git, this repo, branch `*/main`, script path `Jenkinsfile`
-- trigger: the GitHub webhook points to `<jenkins-url>/github-webhook/`
+- trigger: Poll SCM every 5 minutes, declared in the Jenkinsfile. A `githubPush()` webhook trigger is declared too, but it needs a public Jenkins URL (`<jenkins-url>/github-webhook/`) and is not set up here
 
 ## API
 

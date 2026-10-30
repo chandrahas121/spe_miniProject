@@ -91,7 +91,7 @@
   <g font-size="12" text-anchor="middle" fill="#1b1f24">
     <text x="50" y="70" font-weight="bold">Developer</text><text x="50" y="86" font-size="10">git push</text>
     <text x="165" y="70" font-weight="bold">GitHub</text><text x="165" y="86" font-size="10">repo (main)</text>
-    <text x="240" y="64" font-size="10">webhook</text><text x="240" y="90" font-size="10">/ poll SCM</text>
+    <text x="240" y="64" font-size="10">poll SCM</text><text x="240" y="90" font-size="10">every 5 min</text>
     <text x="328" y="70" font-weight="bold">Checkout</text><text x="328" y="86" font-size="9">git checkout</text>
     <text x="435" y="70" font-weight="bold">Build</text><text x="435" y="86" font-size="9">mvn package</text>
     <text x="542" y="70" font-weight="bold">Test</text><text x="542" y="86" font-size="9">mvn test</text>
@@ -114,7 +114,7 @@
     <text x="695" y="274" text-anchor="end">curl / browser</text>
   </g>
 </svg>
-<figcaption>Figure 1. A push to GitHub starts the Jenkins pipeline (GitHub webhook, with Poll SCM every 5 minutes as fallback). The image pushed to Docker Hub is the one deployed on the Docker host, where nginx spreads requests over two calculator replicas.</figcaption>
+<figcaption>Figure 1. A push to GitHub starts the Jenkins pipeline automatically: Jenkins polls the repository every 5 minutes (Poll SCM). The image pushed to Docker Hub is the one deployed on the Docker host, where nginx spreads requests over two calculator replicas.</figcaption>
 </figure>
 
 <h2>3. Application</h2>
@@ -130,7 +130,7 @@
 <h2>4. Jenkins pipeline stages</h2>
 <table>
   <thead><tr><th style="width:12%">Stage</th><th style="width:45%">What it does</th><th>Notes</th></tr></thead>
-  <tr><td>Checkout</td><td><code>checkout scm</code> pulls the latest commit of <code>main</code>.</td><td>Triggered by <code>githubPush()</code>; <code>pollSCM</code> every 5 min as fallback.</td></tr>
+  <tr><td>Checkout</td><td><code>checkout scm</code> pulls the latest commit of <code>main</code>.</td><td>Started automatically by <code>pollSCM</code> (checks GitHub every 5 min). A <code>githubPush()</code> webhook trigger is declared too but not set up.</td></tr>
   <tr><td>Build</td><td><code>./mvnw -B clean package -DskipTests</code> produces <code>target/calculator.jar</code>.</td><td>Maven wrapper, so Jenkins needs no Maven install.</td></tr>
   <tr><td>Test</td><td><code>./mvnw -B test</code>, then the <code>junit</code> step publishes the XML reports.</td><td>A failing test fails the build; results are still published.</td></tr>
   <tr><td>Docker Build</td><td><code>docker build</code> tagged <code>chandrahas121/calculator:&lt;build number&gt;</code> and <code>:latest</code>.</td><td>Multi-stage Dockerfile (section 5).</td></tr>
