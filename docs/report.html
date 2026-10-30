@@ -4,28 +4,36 @@
 <meta charset="utf-8">
 <title>CSE 816 Mini-Project Report</title>
 <style>
-  @page { size: A4; margin: 13mm 14mm; }
+  @page { size: A4; margin: 12mm 14mm; }
   * { box-sizing: border-box; }
-  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 9.4pt; line-height: 1.36; color: #1b1f24; margin: 0; }
-  header { border-bottom: 2px solid #1b1f24; padding-bottom: 6px; margin-bottom: 8px; }
-  .course { font-size: 8.5pt; color: #555; text-transform: uppercase; letter-spacing: .04em; }
-  h1 { font-size: 16pt; margin: 2px 0 4px; }
-  .meta { font-size: 8.6pt; color: #333; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 9pt; line-height: 1.32; color: #1b1f24; margin: 0; }
+  header { border-bottom: 2px solid #1b1f24; padding-bottom: 5px; margin-bottom: 6px; }
+  .course { font-size: 8.3pt; color: #555; text-transform: uppercase; letter-spacing: .04em; }
+  h1 { font-size: 15.5pt; margin: 2px 0 3px; }
+  .meta { font-size: 8.4pt; color: #333; line-height: 1.4; }
   .meta b { color: #000; }
-  h2 { font-size: 11pt; margin: 11px 0 4px; padding-bottom: 2px; border-bottom: 1px solid #c9ced4; }
-  p { margin: 0 0 5px; }
-  ul { margin: 2px 0 5px; padding-left: 16px; }
+  h2 { font-size: 10.6pt; margin: 8px 0 3px; padding-bottom: 2px; border-bottom: 1px solid #c9ced4; break-after: avoid; }
+  p { margin: 0 0 4px; }
+  ul { margin: 2px 0 4px; padding-left: 16px; }
   li { margin: 0 0 2px; }
-  table { border-collapse: collapse; width: 100%; margin: 3px 0 6px; font-size: 8.7pt; }
-  th, td { border: 1px solid #c9ced4; padding: 3px 5px; vertical-align: top; text-align: left; }
+  table { border-collapse: collapse; width: 100%; margin: 3px 0 5px; font-size: 8.4pt; }
+  th, td { border: 1px solid #c9ced4; padding: 2.5px 5px; vertical-align: top; text-align: left; }
   th { background: #f1f3f5; }
-  code { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 8.2pt; background: #f1f3f5; padding: 0 2px; border-radius: 2px; }
-  figure { margin: 4px 0 6px; }
-  figcaption { font-size: 8.4pt; color: #444; margin-top: 2px; }
-  .nobreak { break-inside: avoid; }
-  h2 { break-after: avoid; }
   tr { break-inside: avoid; }
+  code { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 7.9pt; background: #f1f3f5; padding: 0 2px; border-radius: 2px; }
+  figure { margin: 3px 0 5px; }
+  figcaption { font-size: 8pt; color: #444; margin-top: 2px; line-height: 1.3; }
+  .nobreak { break-inside: avoid; }
   svg text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+  /* evidence page */
+  .evidence { break-before: page; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; align-items: start; }
+  .evidence figure { margin: 0 0 3.5mm; }
+  .shot, .crop { border: 1px solid #c9ced4; display: block; width: 100%; }
+  .crop { overflow: hidden; }
+  .crop img { display: block; }
+  .req td:first-child { width: 52%; }
 </style>
 </head>
 <body>
@@ -34,7 +42,7 @@
   <div class="course">CSE 816 &ndash; Software Production Engineering &middot; Mini-Project (Term I, 2026-27)</div>
   <h1>End-to-End CI/CD Pipeline for a Calculator REST API</h1>
   <div class="meta">
-    <b>Student:</b> chandrahas121 &nbsp;&middot;&nbsp;
+    <b>Student:</b> Chandrahas Reddy &nbsp;&middot;&nbsp; <b>Roll no.:</b> IMT2023037 &nbsp;&middot;&nbsp; <b>GitHub:</b> chandrahas121<br>
     <b>Repository:</b> https://github.com/chandrahas121/spe_miniProject &nbsp;&middot;&nbsp;
     <b>Docker Hub:</b> https://hub.docker.com/r/chandrahas121/calculator
   </div>
@@ -45,7 +53,7 @@
 
 <h2>2. Architecture</h2>
 <figure class="nobreak">
-<svg viewBox="0 0 940 350" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pipeline architecture">
+<svg viewBox="0 0 940 350" width="96%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pipeline architecture">
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#343a40"/>
@@ -106,7 +114,7 @@
     <text x="695" y="274" text-anchor="end">curl / browser</text>
   </g>
 </svg>
-<figcaption>Figure 1. A push to GitHub starts the Jenkins pipeline (GitHub webhook, with Poll SCM every 5 minutes as fallback). The same image that was pushed to Docker Hub is deployed on the Docker host, where nginx spreads requests over two calculator replicas.</figcaption>
+<figcaption>Figure 1. A push to GitHub starts the Jenkins pipeline (GitHub webhook, with Poll SCM every 5 minutes as fallback). The image pushed to Docker Hub is the one deployed on the Docker host, where nginx spreads requests over two calculator replicas.</figcaption>
 </figure>
 
 <h2>3. Application</h2>
@@ -121,7 +129,7 @@
 
 <h2>4. Jenkins pipeline stages</h2>
 <table>
-  <tr><th style="width:13%">Stage</th><th style="width:44%">What it does</th><th>Notes</th></tr>
+  <thead><tr><th style="width:12%">Stage</th><th style="width:45%">What it does</th><th>Notes</th></tr></thead>
   <tr><td>Checkout</td><td><code>checkout scm</code> pulls the latest commit of <code>main</code>.</td><td>Triggered by <code>githubPush()</code>; <code>pollSCM</code> every 5 min as fallback.</td></tr>
   <tr><td>Build</td><td><code>./mvnw -B clean package -DskipTests</code> produces <code>target/calculator.jar</code>.</td><td>Maven wrapper, so Jenkins needs no Maven install.</td></tr>
   <tr><td>Test</td><td><code>./mvnw -B test</code>, then the <code>junit</code> step publishes the XML reports.</td><td>A failing test fails the build; results are still published.</td></tr>
@@ -134,28 +142,74 @@
 
 <h2>5. Containerization and deployment</h2>
 <ul>
-  <li><b>Dockerfile</b> (multi-stage): a <code>maven:3.9-eclipse-temurin-21</code> stage builds the JAR (<code>pom.xml</code> is copied first so the dependency layer is cached until the pom changes); the runtime stage is <code>eclipse-temurin:21-jre-alpine</code> and copies only the JAR. It runs as a non-root user, has an explicit <code>EXPOSE 8081</code>, uses the exec-form <code>ENTRYPOINT</code> so <code>docker stop</code> reaches Java, and a <code>.dockerignore</code> keeps the build context small. A single <code>docker run -p 8081:8081</code> serves the API.</li>
-  <li><b>Compose</b> (<code>docker-compose.yml</code>): service <code>calculator</code> with 2 replicas, a health check on <code>/actuator/health</code>, <code>restart: unless-stopped</code> and a <code>PORT</code> environment variable; service <code>nginx</code> (port 8088) that waits for healthy replicas and balances round-robin (the <code>X-Upstream</code> header shows which replica answered); a user-defined network <code>calculator-net</code>. One <code>docker compose up -d</code> starts everything.</li>
-  <li><b>Checked behaviour:</b> a second <code>up -d</code> changes nothing; a new image tag recreates only the calculators while nginx keeps serving; a crashed replica is restarted automatically.</li>
+  <li><b>Dockerfile</b> (multi-stage): a <code>maven:3.9-eclipse-temurin-21</code> stage builds the JAR (<code>pom.xml</code> is copied first so the dependency layer stays cached); the runtime stage is <code>eclipse-temurin:21-jre-alpine</code> and copies only the JAR. Non-root user, explicit <code>EXPOSE 8081</code>, exec-form <code>ENTRYPOINT</code> so <code>docker stop</code> reaches Java, and a <code>.dockerignore</code>. A single <code>docker run -p 8081:8081</code> serves the API.</li>
+  <li><b>Compose:</b> service <code>calculator</code> with 2 replicas, a health check on <code>/actuator/health</code>, <code>restart: unless-stopped</code> and a <code>PORT</code> variable; service <code>nginx</code> (port 8088) that waits for healthy replicas and balances round-robin (the <code>X-Upstream</code> header shows which replica answered); network <code>calculator-net</code>. One <code>docker compose up -d</code> starts everything.</li>
+  <li><b>Checked behaviour:</b> a second <code>up -d</code> changes nothing; a new image tag recreates only the calculators while nginx keeps serving; a crashed replica restarts automatically.</li>
 </ul>
 
 <h2>6. Git practices</h2>
-<p>Work was split into feature branches (<code>feature/calculator-api</code>, <code>feature/docker-compose</code>, <code>feature/jenkins-pipeline</code>, <code>feature/report</code>), each merged into <code>main</code> with a merge commit, using small commits with plain messages. <code>.gitignore</code> excludes <code>target/</code>, IDE files, <code>.env</code> and keys. No credential is in the repository: the Docker Hub token and the notification address exist only in the Jenkins credentials store.</p>
+<p>Feature branches (<code>calculator-api</code>, <code>docker-compose</code>, <code>jenkins-pipeline</code>, <code>report</code>) are merged into <code>main</code> with merge commits, using small commits with plain messages. <code>.gitignore</code> covers <code>target/</code>, IDE files, <code>.env</code> and keys. No credential is in the repository: the Docker Hub token and the notification address live only in the Jenkins credentials store.</p>
 
 <h2>7. Challenges faced and how they were solved</h2>
 <table>
-  <tr><th style="width:36%">Problem</th><th>Solution</th></tr>
+  <tr><th style="width:38%">Problem</th><th>Solution</th></tr>
   <tr><td>Jenkins already occupies port 8080.</td><td>App on 8081 inside the container, nginx published on 8088.</td></tr>
   <tr><td>Docker pulls failed on the development machine: its Docker config pointed to a missing credential helper (<code>docker-credential-desktop</code>).</td><td>The pipeline uses its own <code>DOCKER_CONFIG</code> folder in the workspace, so it does not depend on any user-level Docker config.</td></tr>
   <tr><td>Jenkins could not run <code>docker</code> (permission denied).</td><td>Added the <code>jenkins</code> user to the <code>docker</code> group and restarted the service.</td></tr>
-  <tr><td>Compose derived the project name from the folder name. The Jenkins workspace has a different folder name, so a deploy would have started a second stack fighting for port 8088.</td><td>Fixed the project name (<code>name: calculator-devops</code>) in the compose file.</td></tr>
-  <tr><td>nginx resolved the replica addresses only at start-up, so after a redeploy (new container IPs) it kept pointing at dead addresses.</td><td>Variable <code>proxy_pass</code> with Docker's resolver (<code>127.0.0.11</code>, 5 s validity), so addresses are re-resolved while running.</td></tr>
+  <tr><td>Compose names the project after the folder. The Jenkins workspace folder differs, so a deploy would have started a second stack fighting for port 8088.</td><td>Fixed the project name (<code>name: calculator-devops</code>) in the compose file.</td></tr>
+  <tr><td>nginx resolved the replica addresses only at start-up, so after a redeploy (new container IPs) it pointed at dead addresses.</td><td>Variable <code>proxy_pass</code> with Docker's resolver (<code>127.0.0.11</code>, 5 s validity), so addresses are re-resolved while running.</td></tr>
   <tr><td>Gmail refuses normal account passwords for SMTP (error 535). Jenkins' "Test configuration" button does not save the settings, so the first build fell back to <code>localhost:25</code>.</td><td>Use a Google app password (needs 2-step verification) and press Save after the test. The mail step is wrapped in <code>try/catch</code> so a mail problem never fails the deploy.</td></tr>
-  <tr><td>A pipeline cannot be fully tried without running it.</td><td>The Jenkinsfile was validated with Jenkins' declarative linter and run once in a disposable Jenkins container with dummy credentials, confirming stage order, credential masking, JUnit publishing and the failure path before the real run.</td></tr>
+  <tr><td>A pipeline cannot be fully tried without running it.</td><td>The Jenkinsfile was checked with Jenkins' declarative linter and run once in a disposable Jenkins container with dummy credentials (stage order, credential masking, JUnit publishing, failure path) before the real run.</td></tr>
 </table>
 
 <h2>8. Result</h2>
-<p>Build #1 of the <code>calculator-pipeline</code> job finished with <b>SUCCESS</b>: 28 tests passed, the image <code>chandrahas121/calculator:1</code> (and <code>:latest</code>) is public on Docker Hub, and the stack is running with nginx and both replicas reporting healthy; <code>curl "localhost:8088/api/v1/add?a=2&amp;b=3"</code> returns <code>{"operation":"add","a":2,"b":3,"result":5}</code>. Screenshots of the green Jenkins run, the e-mail, <code>docker ps</code> and sample API responses are submitted separately.</p>
+<p>Builds #1 to #3 of the <code>calculator-pipeline</code> job finished <b>SUCCESS</b>. Build #3 was started automatically by an SCM change after a push to <code>main</code>, ran all stages in 49 s and published the JUnit results with no failures (Fig. 2&ndash;4). Docker Hub (public) holds <code>chandrahas121/calculator</code> with the tags <code>1</code>, <code>2</code>, <code>3</code> and <code>latest</code>. The stack is running with nginx and both replicas healthy, and the API answers through port 8088 (Fig. 6&ndash;7). The status e-mail arrives after each build (Fig. 5). The screenshots are on the next page.</p>
+
+<section class="evidence">
+<h2>9. Evidence (screenshots)</h2>
+
+<div class="grid">
+  <figure>
+    <img class="shot" src="screenshots/01-jenkins-stage-view.png" alt="Jenkins stage view of build 3">
+    <figcaption><b>Fig. 2.</b> Build #3, stage view: Checkout, Build, Test, Docker Build, Push, Deploy and Post Actions all green (49 s); the Mail step reports SUCCESS.</figcaption>
+  </figure>
+  <figure>
+    <img class="shot" src="screenshots/02-jenkins-build-status.png" alt="Jenkins build 3 summary">
+    <figcaption><b>Fig. 3.</b> Build #3 summary: "Started by an SCM change" for the latest commit on <code>main</code>; Tests (no failures).</figcaption>
+  </figure>
+  <figure>
+    <img class="shot" src="screenshots/03-jenkins-console.png" alt="Jenkins console output of build 3">
+    <figcaption><b>Fig. 4.</b> End of the console log of build #3: <code>docker logout</code>, removal of the temporary Docker config, <code>Finished: SUCCESS</code>.</figcaption>
+  </figure>
+  <div>
+    <table class="req">
+      <tr><th>Requirement</th><th>Evidence</th></tr>
+      <tr><td>All pipeline stages working</td><td>Fig. 2, Fig. 4</td></tr>
+      <tr><td>Automatic trigger from GitHub</td><td>Fig. 3 (SCM change)</td></tr>
+      <tr><td>JUnit results published</td><td>Fig. 3 (Tests)</td></tr>
+      <tr><td>E-mail notification</td><td>Fig. 5</td></tr>
+      <tr><td>API responses, incl. 400 error</td><td>Fig. 6</td></tr>
+      <tr><td>Containers running and healthy</td><td>Fig. 7</td></tr>
+    </table>
+    <p style="font-size:8pt;color:#444">Fig. 5 and Fig. 7 were captured after build #2 (image tag <code>2</code>); build #3 ran the same pipeline and deployed tag <code>3</code>.</p>
+  </div>
+</div>
+
+<figure>
+  <img class="shot" src="screenshots/04-email-notification.png" alt="Status e-mail from Jenkins" style="width:78%">
+  <figcaption><b>Fig. 5.</b> Status e-mail sent by Jenkins after build #2: job, build number, image <code>chandrahas121/calculator:2</code> and a link to the log.</figcaption>
+</figure>
+
+<figure>
+  <div class="crop" style="aspect-ratio: 1450 / 100"><img src="screenshots/05-api-responses.png" alt="curl calls through nginx" style="width:156.2%"></div>
+  <figcaption><b>Fig. 6.</b> API through nginx on port 8088: <code>add</code>, <code>add</code> with <code>b=0</code>, and <code>divide</code> by zero, which returns the JSON 400 error.</figcaption>
+</figure>
+
+<figure>
+  <div class="crop" style="aspect-ratio: 2030 / 135"><img src="screenshots/06-docker-ps.png" alt="docker ps" style="width:111.5%"></div>
+  <figcaption><b>Fig. 7.</b> <code>docker ps</code>: two calculator replicas and nginx (port 8088), all <code>(healthy)</code>.</figcaption>
+</figure>
+</section>
 
 </body>
 </html>
